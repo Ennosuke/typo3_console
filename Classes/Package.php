@@ -82,6 +82,7 @@ class Package extends \TYPO3\CMS\Core\Package\Package {
 		$bootstrap->getCommandManager()->registerCommandController('Helhum\Typo3Console\Command\InstallCommandController');
 		$bootstrap->getCommandManager()->registerCommandController('Helhum\Typo3Console\Command\ConfigurationCommandController');
 		$bootstrap->getCommandManager()->registerCommandController('Helhum\Typo3Console\Command\FrontendCommandController');
+		$bootstrap->getCommandManager()->registerCommandController('Helhum\Typo3Console\Command\UpdateCommandController');
 
 		$bootstrap->setRunLevelForCommand('typo3_console:install:databasedata', RunLevel::LEVEL_MINIMAL);
 		$bootstrap->addBootingStepForCommand('typo3_console:install:databasedata', 'helhum.typo3console:database');
@@ -96,5 +97,7 @@ class Package extends \TYPO3\CMS\Core\Package\Package {
 		$bootstrap->setRunLevelForCommand('typo3_console:documentation:*', RunLevel::LEVEL_FULL);
 		$bootstrap->setRunLevelForCommand('typo3_console:scheduler:*', RunLevel::LEVEL_FULL);
 		$bootstrap->setRunLevelForCommand('typo3_console:cleanup:*', RunLevel::LEVEL_FULL);
+
+		$bootstrap->setRunLevelForCommand('typo3_console:update:update', RunLevel::LEVEL_FULL);
 	}
 }

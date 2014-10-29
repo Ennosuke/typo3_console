@@ -1,4 +1,4 @@
-TYPO3 CMS Console [![Build Status](https://travis-ci.org/helhum/typo3_console.svg?branch=master)](https://travis-ci.org/helhum/typo3_console)
+TYPO3 CMS Console
 =================
 
 Many frameworks come with command helper tools that enables interactions on the command line easily.
@@ -38,9 +38,9 @@ just type:
 
 **Installation**
 
-For the extension to work, it *must* be installed in the typo3/ext/ directory *not* in any other possible extension location.
-To get the typo3cms command, just _copy_ typo3/Scripts/typo3cms to your TYPO3 root directory. Windows users must copy
-typo3/Scripts/typo3cms.bat to the TYPO3 root directory and set the location to the php.exe in that file (untested but should work).
+For the extension to work, it *must* be installed in the typo3conf/ext/ directory *not* in any other possible extension location.
+To get the typo3cms command, just _copy_ typo3conf/Scripts/typo3cms to your TYPO3 root directory. Windows users must copy
+typo3conf/Scripts/typo3cms.bat to the TYPO3 root directory and set the location to the php.exe in that file (untested but should work).
 
 Don't forget to activate the extension in the extension manager before you start using the command line tool.
 
