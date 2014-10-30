@@ -46,11 +46,13 @@ class UpdateCommandController extends CommandController {
 		$updateStatements  = $this->schemaMigrationService->getUpdateSuggestions($schemaDifferences);
 
 		$dbQueries = [];
-
+		if(count($updateStatements) > 0) $this->progressStart(count($updateStatements));
 		foreach((array)$updateStatements['create_table'] as $query) {
 			$GLOBALS['TYPO3_DB']->admin_query($query);
 			$dbQueries[] = $query;
+			$this->progressAdvance(1, true);
 			if($GLOBALS['TYPO3_DB']->sql_error()) {
+				$this->progressFinish();
 				$this->outputLine('SQL-ERROR: '.$GLOBALS['TYPO3_DB']->sql_error());
 				return;
 			}
@@ -59,7 +61,9 @@ class UpdateCommandController extends CommandController {
 		foreach((array)$updateStatements['add'] as $query) {
 			$GLOBALS['TYPO3_DB']->admin_query($query);
 			$dbQueries[] = $query;
+			$this->progressAdvance(1, true);
 			if($GLOBALS['TYPO3_DB']->sql_error()) {
+				$this->progressFinish();
 				$this->outputLine('SQL-ERROR: '.$GLOBALS['TYPO3_DB']->sql_error());
 				return;
 			}
@@ -68,14 +72,17 @@ class UpdateCommandController extends CommandController {
 		foreach((array)$updateStatements['change'] as $query) {
 			$GLOBALS['TYPO3_DB']->admin_query($query);
 			$dbQueries[] = $query;
+			$this->progressAdvance(1, true);
 			if($GLOBALS['TYPO3_DB']->sql_error()) {
+				$this->progressFinish();
 				$this->outputLine('SQL-ERROR: '.$GLOBALS['TYPO3_DB']->sql_error());
 				return;
 			}
 		}
+		if(count($updateStatements) > 0) $this->progressFinish();
 		foreach($dbQueries as $query) {
 			$this->outputLine($query);
-		} 
+		}
 		if(count($dbQueries) < 1)
 			$this->outputLine('No update needed');
 		else
@@ -114,9 +121,10 @@ class UpdateCommandController extends CommandController {
 		$extensions					= $this->listUtility->getAvailableAndInstalledExtensionsWithAdditionalInformation();
 
 		$updates = [];
+		$this->progressStart(count($extensions));
 		foreach($extensions as $extKey => $properties) {
+			$this->progressAdvance(1, true);
 			if($properties['updateAvailable'] == true) {
-				$this->outputLine('Updating extension '.$extKey);
 				$highestTerVersionExtension = $this->extensionRepository->findHighestAvailableVersion($extKey);
 				try {
 					$this->managementService->downloadMainExtension($highestTerVersionExtension);
@@ -127,6 +135,7 @@ class UpdateCommandController extends CommandController {
 					$this->outputLine($errorMessage);
 				}
 			}
-		} 
+		}
+		$this->progressFinish(); 
 	}
 }
