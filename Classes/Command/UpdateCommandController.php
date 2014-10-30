@@ -26,6 +26,10 @@ class UpdateCommandController extends CommandController {
 	 */
 	protected $expectedSchemaService;
 
+	protected $listUtility;
+	protected $managementService;
+	protected $extensionsRepository;
+	protected $updateScriptUtility;
 	/**
 	 * Updates the database tables
 	 *
@@ -99,24 +103,24 @@ class UpdateCommandController extends CommandController {
 	}
 
 	/**
-	 * Updates all extensions who have an update aviable
+	 * Updates all extensions who have an update available
 	 *
 	 */
 	public function updateExtensionsCommand() {
-		$listUtility			= $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\ListUtility');
-		$managementService		= $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Service\\ExtensionManagementService');
-		$ExtensionRepository	= $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Domain\\Repository\ExtensionRepository');
-		$updateScriptUtility	= $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\UpdateScriptUtility');
-		$extensions				= $listUtility->getAvailableAndInstalledExtensionsWithAdditionalInformation();
+		$this->listUtility			= $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\ListUtility');
+		$this->managementService	= $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Service\\ExtensionManagementService');
+		$this->extensionRepository	= $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Domain\\Repository\ExtensionRepository');
+		$this->updateScriptUtility	= $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\UpdateScriptUtility');
+		$extensions					= $this->listUtility->getAvailableAndInstalledExtensionsWithAdditionalInformation();
 
 		$updates = [];
 		foreach($extensions as $extKey => $properties) {
 			if($properties['updateAvailable'] == true) {
 				$this->outputLine('Updating extension '.$extKey);
-				$highestTerVersionExtension = $extensionRepository->findHighestAvailableVersion($extKey);
+				$highestTerVersionExtension = $this->extensionRepository->findHighestAvailableVersion($extKey);
 				try {
-					$managementService->downloadMainExtension($highestTerVersionExtension);
-					$updateScriptResult = $updateScriptUtility->executeUpdateIfNeeded($extKey);
+					$this->managementService->downloadMainExtension($highestTerVersionExtension);
+					$updateScriptResult = $this->updateScriptUtility->executeUpdateIfNeeded($extKey);
 				} catch (\Exception $e) {
 					$hasErrors = TRUE;
 					$errorMessage = $e->getMessage();
