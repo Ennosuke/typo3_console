@@ -37,10 +37,10 @@ class UpdateCommandController extends CommandController {
 	 * Outputs each and every SQL Query and ends when one error occurs
 	 */
 	public function updateCommand() {
-		$this->schemaMigrationService = $this->objectManager->get('TYPO3\\CMS\\Install\\Service\\SqlSchemaMigrationService');
-		$this->expectedSchemaService  = $this->objectManager->get('TYPO3\\CMS\\Install\\Service\\SqlExpectedSchemaService');
-		$expectedSchema = $this->expectedSchemaService->getExpectedDatabaseSchema();
-		$currentSchema 	= $this->schemaMigrationService->getFieldDefinitions_database();
+		$this->schemaMigrationService	= $this->objectManager->get('TYPO3\\CMS\\Install\\Service\\SqlSchemaMigrationService');
+		$this->expectedSchemaService 	= $this->objectManager->get('TYPO3\\CMS\\Install\\Service\\SqlExpectedSchemaService');
+		$expectedSchema					= $this->expectedSchemaService->getExpectedDatabaseSchema();
+		$currentSchema					= $this->schemaMigrationService->getFieldDefinitions_database();
 
 		$schemaDifferences = $this->schemaMigrationService->getDatabaseExtra($expectedSchema, $currentSchema);
 		$updateStatements  = $this->schemaMigrationService->getUpdateSuggestions($schemaDifferences);
@@ -96,13 +96,13 @@ class UpdateCommandController extends CommandController {
 	 * Outputs 'No updates needed' if no differences are found else the output is "Updates needed, execute update:update"
 	 */
 	public function checkUpdateCommand() {
-		$this->schemaMigrationService = $this->objectManager->get('TYPO3\\CMS\\Install\\Service\\SqlSchemaMigrationService');
-		$this->expectedSchemaService  = $this->objectManager->get('TYPO3\\CMS\\Install\\Service\\SqlExpectedSchemaService');
-		$expectedSchema = $this->expectedSchemaService->getExpectedDatabaseSchema();
-		$currentSchema 	= $this->schemaMigrationService->getFieldDefinitions_database();
+		$this->schemaMigrationService	= $this->objectManager->get('TYPO3\\CMS\\Install\\Service\\SqlSchemaMigrationService');
+		$this->expectedSchemaService	= $this->objectManager->get('TYPO3\\CMS\\Install\\Service\\SqlExpectedSchemaService');
+		$expectedSchema					= $this->expectedSchemaService->getExpectedDatabaseSchema();
+		$currentSchema					= $this->schemaMigrationService->getFieldDefinitions_database();
 
-		$schemaDifferences = $this->schemaMigrationService->getDatabaseExtra($expectedSchema, $currentSchema);
-		$updateStatements  = $this->schemaMigrationService->getUpdateSuggestions($schemaDifferences);
+		$schemaDifferences				= $this->schemaMigrationService->getDatabaseExtra($expectedSchema, $currentSchema);
+		$updateStatements 				= $this->schemaMigrationService->getUpdateSuggestions($schemaDifferences);
 		if(count($updateStatements) < 1)
 			$this->outputLine('No updates needed');
 		else
@@ -111,7 +111,6 @@ class UpdateCommandController extends CommandController {
 
 	/**
 	 * Updates all extensions who have an update available
-	 *
 	 */
 	public function updateExtensionsCommand() {
 		$this->listUtility			= $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\ListUtility');
