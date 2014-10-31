@@ -98,7 +98,6 @@ class Package extends \TYPO3\CMS\Core\Package\Package {
 		$bootstrap->setRunLevelForCommand('typo3_console:scheduler:*', RunLevel::LEVEL_FULL);
 		$bootstrap->setRunLevelForCommand('typo3_console:cleanup:*', RunLevel::LEVEL_FULL);
 
-		$bootstrap->setRunLevelForCommand('typo3_console:update:update', RunLevel::LEVEL_FULL);
-		$bootstrap->setRunLevelForCommand('typo3_console:update:updateextensions', RunLevel::LEVEL_FULL);
+		$bootstrap->setRunLevelForCommand('typo3_console:update:*', RunLevel::LEVEL_FULL);
 	}
 }
