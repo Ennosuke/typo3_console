@@ -1,4 +1,15 @@
 <?php
+/**
+ * Command Controller for update methods
+ *
+ * Methods via CLI are:
+ * - update:update to update the database after a core update
+ * - update:checkupdate to chek whenether update for db is needed
+ * - update:updateextensions updates all extenions who have a know update
+ *
+ * @author  Dennis Hillmann <dh@udmedia.de>
+ * @version  0.5.0
+ */
 namespace Helhum\Typo3Console\Command;
 
 use Helhum\Typo3Console\Mvc\Controller\CommandController;
@@ -18,17 +29,34 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class UpdateCommandController extends CommandController {
 
 	/**
+	 * Schema Migration Service
 	 * @var \TYPO3\CMS\Install\Service\SqlSchemaMigrationService
 	 */
 	protected $schemaMigrationService;
 	/**
+	 * Expected Schema Service
 	 * @var \TYPO3\CMS\Install\Service\SqlExpectedSchemaService
 	 */
 	protected $expectedSchemaService;
-
+	/**
+	 * List Utility used to get all installed Extensions
+	 * @var \TYPO3\CMS\Extensionmanager\Utility\ListUtility
+	 */
 	protected $listUtility;
+	/**
+	 * Extension Management Service
+	 * @var \TYPO3\CMS\Extensionmanager\Service\ExtensionManagementService
+	 */
 	protected $managementService;
+	/**
+	 * Extension Repository
+	 * @var \TYPO3\CMS\Extensionmanager\Domain\Repository\ExtensionRepository
+	 */
 	protected $extensionsRepository;
+	/**
+	 * Update Script Utility
+	 * @var \TYPO3\CMS\Extensionmanager\Utility\UpdateScriptUtility
+	 */
 	protected $updateScriptUtility;
 	/**
 	 * Updates the database tables
