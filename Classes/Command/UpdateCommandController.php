@@ -74,7 +74,8 @@ class UpdateCommandController extends CommandController {
 		$updateStatements  = $this->schemaMigrationService->getUpdateSuggestions($schemaDifferences);
 
 		$dbQueries = [];
-		if(count($updateStatements) > 0) $this->progressStart(count($updateStatements));
+		$count = count((array)$updateStatements['create_table']) + count((array)$updateStatements['add']) + count((array)$updateStatements['change']);
+		if($count > 0) $this->progressStart($count);
 		foreach((array)$updateStatements['create_table'] as $query) {
 			$GLOBALS['TYPO3_DB']->admin_query($query);
 			$dbQueries[] = $query;
@@ -82,7 +83,7 @@ class UpdateCommandController extends CommandController {
 			if($GLOBALS['TYPO3_DB']->sql_error()) {
 				$this->progressFinish();
 				$this->outputLine('SQL-ERROR: '.$GLOBALS['TYPO3_DB']->sql_error());
-				return;
+				return 1;
 			}
 		}
 
@@ -93,7 +94,7 @@ class UpdateCommandController extends CommandController {
 			if($GLOBALS['TYPO3_DB']->sql_error()) {
 				$this->progressFinish();
 				$this->outputLine('SQL-ERROR: '.$GLOBALS['TYPO3_DB']->sql_error());
-				return;
+				return 1;
 			}
 		}
 
@@ -104,10 +105,10 @@ class UpdateCommandController extends CommandController {
 			if($GLOBALS['TYPO3_DB']->sql_error()) {
 				$this->progressFinish();
 				$this->outputLine('SQL-ERROR: '.$GLOBALS['TYPO3_DB']->sql_error());
-				return;
+				return 1;
 			}
 		}
-		if(count($updateStatements) > 0) $this->progressFinish();
+		if($count > 0) $this->progressFinish();
 		foreach($dbQueries as $query) {
 			$this->outputLine($query);
 		}
@@ -115,7 +116,7 @@ class UpdateCommandController extends CommandController {
 			$this->outputLine('No update needed');
 		else
 			$this->outputLine('Update success');
-		return;
+		return 0;
 	}
 
 	/**
@@ -164,5 +165,51 @@ class UpdateCommandController extends CommandController {
 			}
 		}
 		$this->progressFinish(); 
+	}
+	/**
+	 * Updates the core of typo3 to the newest version including file system changes
+	 * returns error code 1 if an error occured or 0 if no error
+	 */
+	public function updateCoreCommand() {
+		$coreVersionService = $this->objectManager->get('TYPO3\\CMS\\Install\\Service\\CoreVersionService');
+		$coreUpdateService = $this->objectManager->get('TYPO3\\CMS\\Install\\Service\\CoreUpdateService');
+		if(!$coreUpdateService->updateVersionMatrix()) {
+			$this->outputLine('The version matrix could not be updated');
+			return 1;
+		}
+		if(!$coreVersionService->isAReleaseVersion()) {
+			$this->outputLine('This is a dev version and can\'t be updated');
+			return 1;
+		}
+		if(!$coreVersionService->isYoungerPatchReleaseAvailable()) {
+			$this->outputLine('No new patch available');
+			return 0;
+		}
+		$youngestPatchRelease = $coreVersionService->getYoungestPatchRelease();
+		if(!$coreUpdateService->checkPreConditions()) {
+			$this->outputLine('The pre conditions are not met');
+			return 1;
+		}
+		if(!$coreUpdateService->downloadVersion($youngestPatchRelease)) {
+			$this->outputLine('The patch could not be downloaded');
+			return 1;
+		}
+		if(!$coreUpdateService->verifyFileChecksum($youngestPatchRelease)) {
+			$this->outputLine('The file could not be verified');
+			return 1;
+		}
+		if(!$coreUpdateService->unpackVersion($youngestPatchRelease)) {
+			$this->outputLine('The file could not be unpacked');
+			return 1;
+		}
+		if(!$coreUpdateService->moveVersion($youngestPatchRelease)) {
+			$this->outputLine('The update could not be moved');
+			return 1;
+		}
+		if(!$coreUpdateService->activateVersion($youngestPatchRelease)) {
+			$this->outputLine('The update could not be activated');
+			return 1;
+		}
+		return $this->updateCommand();
 	}
 }
