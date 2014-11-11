@@ -6,9 +6,10 @@
  * - update:update to update the database after a core update
  * - update:checkupdate to chek whenether update for db is needed
  * - update:updateextensions updates all extenions who have a know update
+ * - update:updatecore updates the core files and database
  *
  * @author  Dennis Hillmann <dh@udmedia.de>
- * @version  0.5.0
+ * @version  1.0.0
  */
 namespace Helhum\Typo3Console\Command;
 
@@ -22,9 +23,10 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * - update:update to update the database after a core update
  * - update:checkupdate to chek whenether update for db is needed
  * - update:updateextensions updates all extenions who have a know update
+ * - update:updatecore updates the core files and database
  *
  * @author  Dennis Hillmann <dh@udmedia.de>
- * @version  0.5.0
+ * @version  1.0.0
  */
 class UpdateCommandController extends CommandController {
 
